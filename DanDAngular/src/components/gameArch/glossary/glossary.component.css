@@ -1,0 +1,564 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:host {
+  display: block;
+  color: #0f0;
+  font-family: 'VT323', monospace;
+  min-height: auto;
+  width: auto;
+  position: relative;
+  overflow-x: hidden;
+}
+
+:host * {
+  box-sizing: border-box;
+}
+
+:host::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  z-index: 0;
+  opacity: 60%;
+}
+
+.rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: auto;
+  height: auto;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 0, 0.05) 0,
+    rgba(0, 255, 0, 0.1) 1.5px,
+    transparent 3px
+  );
+  animation: rain-scroll-transform 10s linear infinite;
+  z-index: 3;
+  pointer-events: none;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  will-change: transform;
+}
+
+@keyframes rain-scroll-transform {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 30px;
+  position: relative;
+  z-index: 2;
+  border-bottom: 2px solid #0f0;
+  margin-bottom: 30px;
+
+}
+
+.page-main-title {
+  font-family: 'Press Start 2P', cursive;
+  color: #0f0;
+  font-size: clamp(1.8em, 4vw, 2.5em);
+  text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+  margin: 0;
+  text-align: center;
+  flex-grow: 1;
+  margin-left: -150px;
+}
+
+
+.game-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 20px;
+  color: #0f0;
+  border: 2px solid #0f0;
+  text-decoration: none;
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.8em, 1.5vw, 1em);
+  text-shadow: 0 0 5px #0f0, 0 0 7px #0f0;
+  background-color: rgba(0,0,0,0.75);
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(0,255,0,0.3);
+  position: relative;
+}
+
+.game-button:hover {
+  background-color: #0f0;
+  color: #000;
+  box-shadow: 0 0 15px #0f0, 0 0 25px #0f0;
+}
+
+.game-button .arrow {
+  margin-right: 8px;
+  font-size: 1.2em;
+}
+
+.back-button {
+  min-width: 150px; /* Larghezza minima per coerenza con il margin-left del titolo */
+  justify-content: center; /* Centra il contenuto del bottone (testo e freccia) */
+}
+
+/* Contenitore principale del glossario */
+.glossary-container {
+  max-width: 1200px; /* Limita la larghezza massima per leggibilità su schermi grandi */
+  margin-left: auto; /* Centra il contenitore orizzontalmente */
+  margin-right: auto;
+  padding: 0 20px 40px 20px; /* Padding laterale e inferiore */
+  position: relative;
+  z-index: 1; /* Sotto l'header, sopra lo sfondo nero base */
+}
+
+/* Sezioni del glossario (Personaggi, Mostri) */
+.glossary-section {
+  margin-bottom: 30px;
+  background-color: rgba(0, 10, 0, 0.6); /* Sfondo traslucido per le sezioni */
+  border: 1px solid #0a0;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,255,0,0.2);
+}
+
+/* Header cliccabile per le sezioni accordion */
+.glossary-accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 10px;
+  cursor: pointer;
+  border-bottom: 2px solid #0f0;
+  margin-bottom: 20px;
+  background-color: rgba(0,0,0,0.3);
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.glossary-accordion-header:hover {
+  background-color: rgba(0, 50, 0, 0.5);
+}
+
+.glossary-accordion-header:hover .glossary-title,
+.glossary-accordion-header:hover .glossary-accordion-icon {
+  color: #3f3;
+  text-shadow: 0 0 8px #3f3;
+}
+
+.glossary-title {
+  font-family: 'Press Start 2P', cursive;
+  color: #0f0;
+  text-shadow: 0 0 5px #0f0, 0 0 8px #0f0;
+  margin: 0;
+  font-size: clamp(1.3em, 3vw, 1.8em); /* Font responsive */
+  text-align: left;
+}
+
+.glossary-accordion-icon {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(1em, 2.5vw, 1.5em); /* Font responsive */
+  color: #0f0;
+  margin-left: 15px;
+  text-shadow: 0 0 5px #0f0;
+}
+
+/* Griglia per le card del glossario */
+.glossary-grid {
+  display: grid;
+  /* Crea automaticamente colonne flessibili:
+     - auto-fill: riempie lo spazio con quante più colonne possibili.
+     - minmax(280px, 1fr): ogni colonna è larga almeno 280px e al massimo 1 frazione dello spazio disponibile.
+     Questo rende la griglia altamente responsiva. */
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px; /* Spazio tra le card */
+  padding-top: 10px;
+}
+
+.glossary-grid-item {
+  display: flex; /* Assicura che la flip-card occupi lo spazio dell'item */
+  width: 100%;
+  min-width: 0;
+}
+
+/* Stili per l'effetto flip card */
+.glossary-flip-card {
+  background-color: transparent;
+  width: 100%;
+  min-height: 480px; /* Altezza minima per uniformità. Può causare spazio vuoto se il contenuto è poco. */
+  height: 100%; /* Tenta di occupare l'altezza del grid-item (che si adatta alla riga più alta) */
+  perspective: 1500px; /* Per l'effetto 3D del flip */
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.glossary-flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transform-style: preserve-3d;
+  display: flex;
+  flex-direction: column;
+}
+
+.glossary-flip-card.flipped .glossary-flip-card-inner {
+  transform: rotateY(180deg); /* Effetto flip */
+}
+
+.glossary-flip-card-front,
+.glossary-flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden; /* Nasconde il retro della faccia non visibile */
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+}
+
+/* Stile base delle card (applicato a fronte e retro) */
+.glossary-card {
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 15, 0, 0.85); /* Sfondo Matrix scuro e traslucido */
+  border: 2px solid #0f0;
+  box-shadow: 0 0 10px rgba(0,255,0,0.4), inset 0 0 5px rgba(0,255,0,0.2); /* Effetto "glow" */
+  color: #0f0;
+  font-size: 1em;
+  display: flex;
+  flex-direction: column; /* Organizza il contenuto della card verticalmente */
+  transition: box-shadow 0.3s ease-out, transform 0.2s ease-out, background-color 0.2s ease;
+  cursor: pointer;
+  border-radius: 6px;
+  overflow: hidden; /* Nasconde contenuto che potrebbe sbordare (es. angoli immagine) */
+  transform: translateZ(0); /* Promuove a layer per performance animazioni */
+  image-rendering: pixelated; /* Mantiene stile pixelato per le immagini */
+  -webkit-font-smoothing: none; /* Per font pixelati più nitidi */
+  font-smooth: never;
+}
+
+.glossary-monster-card { /* Stili specifici per le card dei mostri, se necessario */
+  border-color: #0c0;
+  box-shadow: 0 0 12px rgba(0,200,0,0.5), inset 0 0 6px rgba(0,200,0,0.3);
+}
+
+/* Effetto hover sulle card (solo sulla faccia frontale visibile) */
+.glossary-flip-card:not(.flipped):hover .glossary-flip-card-front {
+  transform: scale(1.02) translateY(-3px) translateZ(0); /* Leggero ingrandimento e sollevamento */
+  box-shadow: 0 0 20px rgba(0,255,0,0.6), inset 0 0 8px rgba(0,255,0,0.3);
+}
+
+.glossary-flip-card.flipped:hover .glossary-flip-card-back { /* Stile hover per il retro quando visibile */
+  background-color: rgba(0, 25, 0, 0.9);
+  box-shadow: inset 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.glossary-flip-card-back {
+  transform: rotateY(180deg); /* Posiziona il retro girato */
+}
+
+/* Gestione eventi click solo sulla faccia visibile della card */
+.glossary-flip-card:not(.flipped) .glossary-flip-card-front { pointer-events: auto !important; }
+.glossary-flip-card:not(.flipped) .glossary-flip-card-back { pointer-events: none !important; }
+.glossary-flip-card.flipped .glossary-flip-card-front { pointer-events: none !important; }
+.glossary-flip-card.flipped .glossary-flip-card-back { pointer-events: auto !important; }
+
+/* Header interno delle card */
+.glossary-card-header {
+  padding: 10px 12px;
+  border-bottom: 2px solid #0f0;
+  background-color: rgba(0,0,0,0.5); /* Sfondo per staccare dall'immagine */
+  flex-shrink: 0; /* Non si restringe se il contenuto è abbondante */
+  min-height: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.glossary-card-name {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.85em;
+  color: #0f0;
+  text-shadow: 0 0 3px #0f0;
+  word-break: break-word; /* Va a capo se il nome è lungo */
+  line-height: 1.2;
+}
+
+.glossary-badge { /* Badge per tipo PG o pericolo Mostro */
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.65em;
+  background-color: #0f0;
+  color: #000;
+  padding: 4px 7px;
+  border-radius: 3px;
+  white-space: nowrap; /* Evita che il testo del badge vada a capo */
+  font-weight: normal;
+  text-shadow: none;
+  margin-left: 8px;
+  border: 1px solid #000;
+}
+.monster-danger-badge {
+  background-color: #c00; /* Rosso per i mostri pericolosi */
+  color: #fff;
+  border-color: #500;
+}
+
+/* Corpo della card, contenente immagine, statistiche, azioni */
+.glossary-card-body {
+  padding: 12px;
+  flex-grow: 1; /* Occupa lo spazio verticale rimanente nella card */
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto; /* Scroll verticale se il contenuto eccede l'altezza */
+  font-size: 0.95em;
+}
+
+.glossary-card-image-container {
+  width: 100%;
+  height: 140px; /* Altezza fissa per l'immagine, per uniformità */
+  margin-bottom: 12px;
+  background-color: rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid #0f0;
+  flex-shrink: 0; /* Non si restringe */
+  border-radius: 4px;
+}
+
+.glossary-card-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%; /* Immagine responsiva, contenuta nel box */
+  max-height: 100%;
+  object-fit: contain; /* Mantiene le proporzioni, adatta all'interno del box */
+  image-rendering: pixelated;
+}
+
+.glossary-card-image-fallback { /* Mostrato se l'immagine non carica */
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: #0c0;
+  background-color: rgba(0,0,0,0.4);
+  font-family: 'Press Start 2P', cursive;
+}
+
+.glossary-stats-list { /* Lista delle statistiche (HP, ATK, etc.) */
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px 0;
+  font-size: 0.9em;
+  flex-shrink: 0;
+}
+.glossary-stats-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  border-bottom: 1px dashed rgba(0, 255, 0, 0.3); /* Separatore Matrix-style */
+  color: #0f0;
+}
+.glossary-stats-list li:last-child {
+  border-bottom: none;
+}
+.glossary-stats-list span:first-child {
+  color: #0c0; /* Etichetta statistica (es. "HP") */
+  margin-right: 8px;
+}
+.glossary-stats-list span:last-child {
+  font-weight: normal;
+  color: #3f3; /* Valore statistica */
+}
+
+.glossary-details-section { /* Sezione per Azioni ed Equipaggiamento */
+  margin-top: 12px;
+  font-size: 0.85em;
+  flex-shrink: 0;
+}
+.glossary-details-section strong { /* Titolo della sezione (es. "Azioni:") */
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.75em;
+  color: #0f0;
+  text-shadow: 0 0 3px #0f0;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.glossary-tags-container { /* Contenitore per i tag di azioni/equip */
+  display: flex;
+  flex-wrap: wrap; /* I tag vanno a capo se non c'è abbastanza spazio */
+  gap: 6px; /* Spazio tra i tag */
+}
+
+.glossary-tag { /* Stile per i singoli tag cliccabili */
+  font-family: 'VT323', monospace;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-size: 0.9em;
+  color: #000; /* Testo nero per contrasto su sfondo verde */
+  font-weight: normal;
+  border: 1px solid #000;
+  cursor: pointer;
+  text-shadow: none;
+  transition: transform 0.1s ease, background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  background-color: #0f0; /* Sfondo verde Matrix */
+  text-align: center;
+  appearance: none;
+  -webkit-appearance: none;
+  text-decoration: none;
+  line-height: normal;
+}
+.glossary-tag:hover {
+  transform: scale(1.05) translateY(-1px); /* Effetto al passaggio del mouse */
+  background-color: #3f3; /* Verde più brillante */
+  box-shadow: 0 0 8px rgba(0,255,0,0.5);
+}
+
+/* Footer interno delle card (es. "Clicca per Descrizione") */
+.glossary-card-footer {
+  font-family: 'Press Start 2P', cursive;
+  padding: 8px 12px;
+  font-size: 0.65em;
+  text-align: center;
+  border-top: 2px solid #0f0;
+  background-color: rgba(0,0,0,0.5);
+  color: #0c0; /* Verde più scuro per testo meno importante */
+  flex-shrink: 0;
+  min-height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: auto; /* Spinge il footer in fondo alla card se c'è spazio extra */
+}
+
+/* Corpo della descrizione sul retro della card */
+.glossary-description-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  flex-grow: 1; /* Occupa lo spazio disponibile */
+  overflow-y: auto; /* Scroll se la descrizione è lunga */
+}
+
+.glossary-description-text {
+  font-size: 1em;
+  line-height: 1.6; /* Buona interlinea per leggibilità */
+  text-align: left; /* Allineamento standard per testo lungo */
+  color: #0f0;
+  word-break: break-word; /* Va a capo per parole lunghe */
+  white-space: pre-wrap; /* Mantiene gli a capo e gli spazi del testo originale */
+}
+
+/* Messaggi di errore o di glossario vuoto */
+.glossary-error, .glossary-empty-message {
+  text-align: center;
+  padding: 25px;
+  font-size: 1.1em;
+  color: #0c0;
+  font-family: 'Press Start 2P', cursive;
+  background-color: rgba(0,0,0,0.5);
+  border: 1px solid #0f0;
+  border-radius: 4px;
+  margin: 20px; /* Spazio attorno al messaggio */
+}
+.glossary-error { /* Stile specifico per messaggi di errore */
+  color: #f00; /* Rosso per indicare errore */
+  border-color: #f00;
+  text-shadow: 0 0 5px #f00;
+}
+
+/* Stile Matrix per le scrollbar (principalmente per browser Webkit) */
+.glossary-card-body::-webkit-scrollbar,
+.glossary-description-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.glossary-card-body::-webkit-scrollbar-track,
+.glossary-description-body::-webkit-scrollbar-track {
+  background: #000; /* Sfondo nero per la traccia della scrollbar */
+  border-left: 1px solid #0f0; /* Bordo Matrix */
+}
+
+.glossary-card-body::-webkit-scrollbar-thumb,
+.glossary-description-body::-webkit-scrollbar-thumb {
+  background-color: #0f0; /* "Maniglia" della scrollbar verde Matrix */
+  border: 1px solid #000;
+}
+
+.glossary-card-body::-webkit-scrollbar-thumb:hover,
+.glossary-description-body::-webkit-scrollbar-thumb:hover {
+  background-color: #3f3; /* Verde più brillante al hover */
+}
+
+/* Stile scrollbar per Firefox */
+.glossary-card-body,
+.glossary-description-body {
+  scrollbar-width: thin;
+  scrollbar-color: #0f0 #000; /* thumb track */
+}
+
+/* Media Query per schermi medi (tablet, piccoli desktop) */
+@media (max-width: 768px) {
+  .header-controls {
+    padding: 15px 20px;
+    flex-direction: column; /* Header in colonna: bottone sopra/sotto titolo */
+    gap: 15px; /* Spazio tra bottone e titolo */
+  }
+  .page-main-title {
+    font-size: clamp(1.5em, 5vw, 2em);
+    margin-left: 0; /* Rimuove il margine di compensazione */
+    text-align: center;
+    width: 100%;
+  }
+  .back-button {
+    min-width: auto; /* Rimuove larghezza minima fissa */
+    width: 60%; /* Larghezza relativa */
+    max-width: 200px; /* Ma non troppo largo */
+  }
+  .glossary-title { font-size: clamp(1.1em, 3.5vw, 1.5em); }
+  .glossary-accordion-icon { font-size: clamp(0.9em, 2vw, 1.2em); }
+  .glossary-card { font-size: 0.95em; } /* Testo nelle card leggermente più piccolo */
+  .glossary-card-header { font-size: 0.8em; min-height: 45px; }
+  .glossary-tag { font-size: 0.8em; padding: 4px 8px; }
+  .glossary-grid {
+    grid-template-columns: 1fr; /* Una singola colonna per le card */
+    gap: 15px;
+  }
+  .glossary-flip-card { min-height: 460px; } /* Altezza minima card leggermente ridotta */
+}
+
+/* Media Query per schermi piccoli (smartphone) */
+@media (max-width: 480px) {
+  .header-controls { padding: 15px; }
+  .page-main-title { font-size: clamp(1.3em, 6vw, 1.8em); }
+  .glossary-title { font-size: clamp(1em, 4vw, 1.3em); }
+  .glossary-card-name { font-size: 0.8em; }
+  .glossary-badge { font-size: 0.6em; padding: 3px 5px; }
+  .glossary-stats-list { font-size: 0.85em; }
+  .glossary-card-image-container { height: 110px; } /* Immagini più piccole */
+  .glossary-flip-card { min-height: 440px; }
+  .glossary-description-text { font-size: 0.9em; }
+}

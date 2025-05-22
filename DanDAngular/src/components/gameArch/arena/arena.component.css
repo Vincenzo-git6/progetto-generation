@@ -1,0 +1,682 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+:host {
+  display: block;
+  min-height: 100vh;
+  max-height: 100vh; /* Impedisce lo scorrimento a livello di host */
+  background-color: #000000;
+  background-image: url('https://i.imgur.com/fMM7pDE.png'); /* Immagine di sfondo originale */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #0f0;
+  font-family: 'VT323', monospace;
+  padding: 15px;
+  position: relative;
+  overflow: hidden; /* Impedisce lo scorrimento della pagina principale */
+}
+
+:host::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: repeating-linear-gradient(
+    0deg,
+    rgba(0, 255, 0, 0.04) 0,
+    rgba(0, 255, 0, 0.08) 1.5px,
+    transparent 3px
+  );
+  animation: rain-scroll-transform 10s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+@keyframes rain-scroll-transform {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+.arena-container {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: calc(100vh - 30px);
+  overflow: hidden;
+}
+
+/* Overlay e Pulsanti Generali (Loading, Outcome, Pause) */
+.loading-overlay,
+.battle-outcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  text-align: center;
+}
+
+.loading-overlay p,
+.battle-outcome-overlay h2 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(1.5em, 4vw, 2.5em);
+  color: #0f0;
+  text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+  padding: 20px;
+}
+
+.game-style-button,
+.battle-outcome-overlay button {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.8em, 1.6vw, 1.0em);
+  padding: 10px 15px;
+  background-color: #0f0;
+  color: #000;
+  border: 2px solid #0f0;
+  cursor: pointer;
+  text-shadow: none;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+  margin: 8px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.game-style-button:hover,
+.battle-outcome-overlay button:hover {
+  background-color: #000;
+  color: #0f0;
+  box-shadow: 0 0 10px #0f0;
+}
+
+.pause-menu-button-container {
+  position: fixed;
+  top: 60px;
+  right: 60px;
+  z-index: 1001;
+}
+
+.pause-button {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.5em;
+  background-color: rgba(0,0,0,0.7);
+  color: #0f0;
+  border: 2px solid #0f0;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 20%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 5px #0f0;
+  transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+}
+.pause-button:hover {
+  background-color: #0f0;
+  color: #000;
+  box-shadow: 0 0 15px #0f0;
+}
+
+.pause-menu-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.pause-menu-content {
+  background-color: #050505;
+  color: #0f0;
+  border: 3px solid #0f0;
+  padding: 30px 40px;
+  border-radius: 10px;
+  text-align: center;
+  font-family: 'VT323', monospace;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 0 40px rgba(0, 255, 0, 0.4);
+  width: auto;
+  min-width: 300px;
+  max-width: 90%;
+  position: relative;
+  z-index: 1001;
+}
+.pause-menu-content h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(1.8em, 4vw, 2.2em);
+  margin-top: 0;
+  margin-bottom: 25px;
+  text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+}
+.pause-menu-content .game-style-button {
+  display: block;
+  width: calc(100% - 20px);
+  margin: 15px auto;
+}
+.pause-menu-content .resume-button { background-color: #3f3; border-color: #3f3; color: #000; }
+.pause-menu-content .resume-button:hover { background-color: #000; color: #3f3; }
+
+/* --- NUOVO LAYOUT BATTAGLIA --- */
+.battle-scene-main-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 93%;
+  gap: 10px;
+  box-sizing: border-box;
+  padding: 5px;
+}
+
+/* 1. Barra Informazioni Turno */
+.turn-info-bar {
+  width: 100%;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 4px;
+  font-size: clamp(1.8em, 3.6vw, 2.2em);
+  flex-shrink: 0;
+  min-height: 40px;
+  height: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.turn-info-bar>p {
+  background-color: rgba(10, 10, 10, 0.25);
+  padding: 5px;
+  border-radius: 4px;
+}
+
+/* 2. Area Personaggi e Mostri (centrale) */
+.characters-and-monsters-area {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+  flex-grow: 1;
+  height: auto;
+  min-height: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  align-items: flex-end;
+}
+
+.character-display-column {
+  width: calc(50% - 5px);
+  padding: 10px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  align-items: flex-start;
+  overflow-y: auto;
+  box-sizing: border-box;
+  gap: 20px; /* MODIFICATO: Aumentato gap per card più larghe */
+  max-height: 100%;
+}
+.character-display-column.player-characters-column {
+  justify-content: flex-start;
+}
+.character-display-column.monster-characters-column {
+  justify-content: flex-end;
+  align-content: flex-end;
+}
+.character-display-column h3 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(2.0em, 4.0vw, 2.4em);
+  margin-top: 0;
+  margin-bottom: 10px;
+  text-align: center;
+  text-shadow: 0 0 4px #0f0;
+  border-bottom: 1px solid #0f0;
+  padding-bottom: 8px;
+  flex-shrink: 0;
+  width: 100%;
+  order: -1;
+}
+
+
+/* Stili per Character Card */
+.character-card {
+  padding: 0;
+  display: block;
+  position: relative;
+  flex-shrink: 0;
+  width: 426px;  /* MODIFICATO: Card più larghe */
+  height: 420px; /* Altezza mantenuta per ora, l'immagine si adatterà */
+  box-sizing: border-box;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.character-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+  transition: transform 0.3s ease-out;
+}
+.character-card:hover .character-image {
+  transform: scale(1.05);
+}
+
+/* Overlay per Nome, HP e Barra HP */
+.character-details-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.8) 60%, rgba(0,0,0,0) 100%);
+  padding: 14px 12px 10px 12px;
+  box-sizing: border-box;
+  color: #fff;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.monster-name
+{
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.9em, 1.7vw, 1.1em); /* Aumentato per card più larghe */
+  margin-bottom: 8px;
+  color: #ff4444;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.character-name {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.9em, 1.7vw, 1.1em); /* Aumentato per card più larghe */
+  margin-bottom: 8px;
+  color: #0f0;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+  font-weight: bold;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.character-hp-container {
+  width: 100%;
+}
+
+.character-hp {
+  font-size: clamp(0.8em, 1.5vw, 0.95em); /* Aumentato */
+  margin-bottom: 7px;
+  text-align: center;
+  color: #eee;
+}
+
+.hp-bar-container {
+  width: 90%;
+  height: 12px;
+  background-color: #222;
+  border: 1px solid #0a0;
+  margin: 0 auto 7px auto; /* Aumentato margine inferiore */
+  border-radius: 3px;
+  overflow: hidden;
+}
+.hp-bar {
+  height: 100%;
+  background-color: #0f0;
+  transition: width 0.5s ease-in-out;
+}
+.character-status-defeated {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.95em, 1.8vw, 1.15em); /* Aumentato */
+  color: #ff4444;
+  text-align: center;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px #000;
+  padding: 12px 0;
+}
+
+
+/* Stati delle Card */
+.character-card.active-character {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 10px #00ff00);
+}
+.character-card.targetable {
+  border-color: #00ffff;
+  filter: drop-shadow(0 0 10px #00ffff);
+}
+
+.character-card.selected-as-target {
+  border-color: #ff0000 !important;
+  transform: scale(1.05);
+  filter: drop-shadow(0 0 10px #ff0000);
+}
+.character-card.defeated .character-image {
+  filter: grayscale(95%) brightness(0.5);
+}
+
+.turn-indicator-on-card {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background-color: rgba(255, 165, 0, 0.85);
+  color: #000;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.9em;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-weight: bold;
+  z-index: 5;
+  box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+
+/* 3. Pannello Azioni e Log (inferiore) */
+.action-log-bottom-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  gap: 10px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  height: 340px;
+  background-color: rgba(0, 5, 0, 0.7);
+  border: 1px solid #0f0;
+  border-radius: 6px;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-height: 300px;
+}
+
+.current-actions-area,
+.battle-log-area {
+  width: calc(50% - 5px);
+  height: 100%;
+  padding: 10px;
+  border: 1px solid #0a0;
+  background-color: rgba(0, 15, 0, 0.75);
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.current-actions-area h4,
+.battle-log-area h4 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: clamp(0.9em, 1.8vw, 1.15em);
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #3f3;
+  border-bottom: 1px solid #3f3;
+  padding-bottom: 8px;
+  text-align: center;
+  flex-shrink: 0;
+
+}
+
+/* Stili per il display delle azioni del giocatore */
+.player-actions-display-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  flex-grow: 1;
+}
+.player-actions-display-panel .action-button {
+  font-size: clamp(0.8em, 1.5vw, 0.95em);
+  padding: 10px 14px;
+  width: 90%;
+  max-width: 280px;
+}
+.player-actions-display-panel .no-actions-text,
+.paused-actions-message p {
+  width: 100%;
+  text-align: center;
+  font-style: italic;
+  color: #aaa;
+  font-size: clamp(0.8em, 1.6vw, 0.95em);
+  margin-top: 15px;
+}
+
+/* Stili per il pannello di targeting */
+.targeting-info-panel {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1;
+}
+.targeting-info-panel p {
+  margin: 0 0 5px 0;
+  font-size: clamp(0.8em, 1.6vw, 0.95em);
+}
+.targeting-info-panel strong { color: #ff0; }
+.targeting-info-panel .game-style-button {
+  font-size: clamp(0.7em, 1.3vw, 0.85em);
+  padding: 6px 10px;
+  margin: 3px;
+}
+.targeting-info-panel .confirm-action-button { background-color: #0f0; color: #000; border-color: #0f0; }
+.targeting-info-panel .confirm-action-button:hover { background-color: #3f3; }
+.targeting-info-panel .confirm-action-button:disabled { background-color: #555; color: #aaa; border-color: #555; cursor: not-allowed; }
+.targeting-info-panel .cancel-action-button { background-color: #f00; color: #fff; border-color: #f00; }
+.targeting-info-panel .cancel-action-button:hover { background-color: #c00; }
+
+/* Stili per il log di battaglia */
+.log-entries p {
+  margin: 0 0 6px 0;
+  word-break: break-word;
+  font-size: clamp(1.8em, 3.4vw, 2.2em); /* MODIFICATO: Aumentato font-size */
+  line-height: 1.55; /* MODIFICATO: Aumentata interlinea */
+}
+.log-entries p:last-child { margin-bottom: 0; }
+
+
+/* Messaggio di Errore Globale (invariato) */
+.error-message-container { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: auto; max-width: 80%; padding: 15px; border: 2px solid #f00; background-color: rgba(50,0,0,0.85); color: #fcc; text-align: center; border-radius: 8px; z-index: 1100; }
+.error-message-container p { margin-bottom: 8px; }
+.error-message-container .game-style-button { font-size: 0.8em; padding: 6px 12px; background-color: #f00; color: #fff; border: none; }
+.error-message-container .game-style-button:hover { background-color: #c00; }
+
+/* Scrollbar personalizzate (invariate) */
+.character-display-column::-webkit-scrollbar, .current-actions-area::-webkit-scrollbar, .battle-log-area::-webkit-scrollbar, .log-entries::-webkit-scrollbar { width: 8px; }
+.character-display-column::-webkit-scrollbar-track, .current-actions-area::-webkit-scrollbar-track, .battle-log-area::-webkit-scrollbar-track, .log-entries::-webkit-scrollbar-track { background: #000; border-left: 1px solid #0f0; }
+.character-display-column::-webkit-scrollbar-thumb, .current-actions-area::-webkit-scrollbar-thumb, .battle-log-area::-webkit-scrollbar-thumb, .log-entries::-webkit-scrollbar-thumb { background-color: #0f0; border: 1px solid #000; }
+.character-display-column::-webkit-scrollbar-thumb:hover, .current-actions-area::-webkit-scrollbar-thumb:hover, .battle-log-area::-webkit-scrollbar-thumb:hover, .log-entries::-webkit-scrollbar-thumb:hover { background-color: #3f3; }
+.character-display-column, .current-actions-area, .battle-log-area, .log-entries { scrollbar-width: thin; scrollbar-color: #0f0 #000; }
+
+/* Stile Pausa (invariato) */
+.battle-scene-main-layout.paused > *:not(.pause-menu-button-container) { filter: blur(3px); opacity: 0.7; pointer-events: none !important; }
+
+/* --- MEDIA QUERIES PER RESPONSIVE DESIGN --- */
+@media (max-width: 1600px) { /* Aggiunto breakpoint per schermi molto larghi ma non enormi */
+  .character-card {
+    width: 350px;
+    height: 400px; /* Manteniamo un aspect ratio simile */
+  }
+  .character-display-column {
+    gap: 15px;
+  }
+}
+
+
+@media (max-width: 1400px) {
+  .character-card {
+    width: 320px; /* Ridotto per schermi più piccoli */
+    height: 380px;
+  }
+  .character-display-column {
+    gap: 12px;
+  }
+  .action-log-bottom-panel {
+    height: 320px;
+    min-height: 280px;
+  }
+}
+
+
+@media (max-width: 1200px) {
+  .character-card {
+    width: 280px; /* Ulteriore riduzione */
+    height: 350px;
+  }
+  .action-log-bottom-panel {
+    height: 300px;
+    min-height: 260px;
+  }
+  .character-display-column {
+    gap: 10px;
+    justify-content: space-around; /* Per gestire meglio lo spazio se entra una sola card */
+  }
+}
+
+@media (max-width: 992px) { /* Tablet */
+  :host { padding: 10px; }
+  .arena-container { height: calc(100vh - 20px); }
+  .battle-scene-main-layout { gap: 8px; }
+  .turn-info-bar { height: 7vh; max-height: 45px; }
+
+  .characters-and-monsters-area {
+    flex-direction: column;
+    height: auto;
+    min-height: 0;
+    flex-grow: 1;
+    align-items: stretch;
+  }
+  .character-display-column {
+    width: 100%;
+    max-height: none;
+    height: 50%;
+    min-height: 320px;
+    margin-bottom: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .character-display-column.monster-characters-column {
+    justify-content: center;
+    align-content: center;
+  }
+  .character-display-column h3 { order: -1; }
+  .character-display-column:last-child { margin-bottom: 0; }
+
+  .action-log-bottom-panel {
+    flex-direction: column;
+    height: 300px;
+    min-height: 260px;
+    flex-shrink: 0;
+    flex-grow: 0;
+  }
+  .current-actions-area,
+  .battle-log-area {
+    width: 100%;
+    height: calc(50% - 4px);
+    max-height: none;
+    margin-bottom: 8px;
+  }
+  .current-actions-area:last-child, .battle-log-area:last-child { margin-bottom: 0; }
+
+  .character-card { width: 240px; height: 335px; }
+  .character-details-overlay { padding: 10px 8px 6px 8px; }
+  .character-name { font-size: clamp(0.8em, 1.5vw, 0.95em); }
+  .character-hp { font-size: clamp(0.75em, 1.3vw, 0.85em); }
+  .hp-bar-container { height: 10px; }
+  .log-entries p { font-size: clamp(0.85em, 1.6vw, 1.0em); line-height: 1.5; }
+
+}
+
+@media (max-width: 768px) { /* Mobile landscape e tablet piccoli */
+  .pause-button { font-size: 1.2em; width: 40px; height: 40px; padding: 6px 10px; }
+  .turn-info-bar { padding: 5px 8px; min-height: 35px; height: 6vh; max-height: 40px; font-size: clamp(0.8em, 1.7vw, 1em); }
+
+  .character-display-column {
+    min-height: 280px;
+    gap: 10px;
+  }
+  .character-card { width: 200px; height: 280px; }
+  .character-details-overlay { padding: 8px 6px 5px 6px; }
+  .character-name { font-size: clamp(0.75em, 1.3vw, 0.85em); margin-bottom: 4px;}
+  .character-hp { font-size: clamp(0.7em, 1.2vw, 0.8em); margin-bottom: 3px;}
+  .hp-bar-container { height: 9px; }
+
+
+  .action-log-bottom-panel { height: 280px; padding: 8px; min-height: 240px; }
+  .current-actions-area, .battle-log-area { padding: 8px; }
+  .player-actions-display-panel .action-button { font-size: clamp(0.7em, 1.3vw, 0.85em); padding: 7px 10px; }
+  .targeting-info-panel .game-style-button { font-size: clamp(0.65em, 1.2vw, 0.8em); padding: 5px 8px; }
+  .log-entries p { font-size: clamp(0.8em, 1.5vw, 0.95em); line-height: 1.45; }
+}
+
+@media (max-width: 480px) { /* Mobile portrait */
+  :host { padding: 5px; }
+  .arena-container { height: calc(100vh - 10px); }
+  .battle-scene-main-layout { gap: 5px; padding: 3px; }
+
+  .turn-info-bar { min-height: 30px; height: 5vh; max-height: 35px; font-size: clamp(0.75em, 1.6vw, 0.9em); }
+
+  .character-display-column {
+    min-height: auto;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    height: 100%;
+  }
+  .character-display-column.monster-characters-column {
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .character-display-column h3 { order: 0; }
+  .character-card {
+    width: clamp(220px, 80vw, 260px); /* Aumentato per visibilità */
+    height: clamp(310px, 110vw, 365px); /* Aumentato per visibilità */
+    margin-bottom: 10px;
+  }
+  .character-details-overlay { padding: 10px 8px 6px 8px; }
+  .character-name { font-size: clamp(0.75em, 3vw, 0.85em); }
+  .character-hp { font-size: clamp(0.7em, 2.8vw, 0.8em); }
+  .hp-bar-container { height: 10px; margin-top: 4px;}
+
+  .action-log-bottom-panel { height: 240px; padding: 5px; gap: 5px; min-height: 200px; }
+  .current-actions-area, .battle-log-area { padding: 5px; }
+  .current-actions-area h4, .battle-log-area h4 { font-size: clamp(0.75em, 1.6vw, 0.9em); margin-bottom: 6px; }
+
+  .player-actions-display-panel .action-button { font-size: clamp(0.65em, 1.2vw, 0.75em); padding: 6px 8px; }
+  .targeting-info-panel p { font-size: clamp(0.7em, 1.5vw, 0.85em); }
+  .targeting-info-panel .game-style-button { font-size: clamp(0.6em, 1.1vw, 0.7em); padding: 4px 7px; }
+  .log-entries p { font-size: clamp(0.75em, 1.4vw, 0.9em); line-height: 1.4; } /* Aumentato font log per mobile */
+
+  .pause-menu-content { padding: 15px 20px; min-width: 0; width: 90%; }
+  .pause-menu-content h3 { font-size: clamp(1.2em, 2.8vw, 1.5em); }
+}

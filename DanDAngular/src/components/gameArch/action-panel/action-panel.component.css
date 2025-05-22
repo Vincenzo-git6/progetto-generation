@@ -1,0 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+.attack-bg {
+  height: 100vh;
+  background: linear-gradient(to bottom, #1c1c1c, #333);
+  font-family: 'Press Start 2P', cursive;
+}
+
+.attack-card {
+  width: 360px;
+  border: 3px solid #000;
+  background-color: #f8f9fa;
+}
+
+.attack-button {
+  border: 2px solid #000;
+  font-size: 12px;
+  font-family: 'Press Start 2P', cursive;
+  transition: transform 0.2s;
+}
+
+.attack-button:hover {
+  transform: scale(1.05);
+  background-color: #ffcc00;
+}

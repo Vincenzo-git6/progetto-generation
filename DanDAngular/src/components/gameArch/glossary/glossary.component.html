@@ -1,0 +1,192 @@
+<div class="header-controls">
+  <a routerLink="/" class="game-button back-button">
+    <span class="arrow">&lt;</span> HOME
+  </a>
+  <h1 class="page-main-title">GLOSSARIO</h1>
+</div>
+
+<div class="rain"></div>
+
+<div class="glossary-container">
+
+  <section class="glossary-section">
+    <div class="glossary-accordion-header" (click)="togglePersonaggi()" role="button" [attr.aria-expanded]="personaggiVisible" aria-controls="personaggi-grid">
+      <h2 class="glossary-title">Personaggi</h2> <span class="glossary-accordion-icon">{{ personaggiVisible ? '▼' : '▶' }}</span>
+    </div>
+
+    <div id="personaggi-grid" *ngIf="personaggiVisible">
+      <div *ngIf="errorLoadingPgs" class="glossary-error" role="alert">
+        {{ errorLoadingPgs }}
+      </div>
+      <div class="glossary-grid" *ngIf="!errorLoadingPgs && personaggi.length > 0">
+        <div class="glossary-grid-item" *ngFor="let pg of personaggi; trackBy: trackByPgId">
+          <div class="glossary-flip-card" [class.flipped]="pg.flipped" [attr.aria-expanded]="pg.flipped">
+            <div class="glossary-flip-card-inner">
+              <div class="glossary-flip-card-front glossary-card"
+                   (click)="handlePgCardFrontClick(pg)"
+                   role="button" tabindex="0"
+                   (keydown.enter)="handlePgCardFrontClick(pg)"
+                   (keydown.space)="handlePgCardFrontClick(pg); $event.preventDefault()">
+                <div class="glossary-card-header">
+                  <span class="glossary-card-name">{{ pg.name }}</span>
+                  <span *ngIf="pg.enumType" class="glossary-badge type-badge">{{ pg.enumType }}</span>
+                </div>
+                <div class="glossary-card-body">
+                  <div class="glossary-card-image-container">
+                    <img #imgPg
+                         [src]="pg.imageUrl"
+                         [alt]="'Immagine di ' + pg.name"
+                         class="glossary-card-image"
+                         loading="lazy"
+                         (error)="imgPg.style.display='none'; fallbackPg.style.display='flex'"
+                         (load)="imgPg.style.display='block'; fallbackPg.style.display='none'">
+                    <div #fallbackPg class="glossary-card-image-fallback" style="display: none;">
+                      <span>?</span>
+                    </div>
+                  </div>
+                  <ul class="glossary-stats-list" [attr.aria-label]="'Statistiche di ' + pg.name">
+                    <li><span>❤️ HP</span><span>{{ pg.hp }}</span></li>
+                    <li><span>⚔️ ATK</span><span>{{ pg.atk }}</span></li>
+                    <li><span>🛡️ DEF</span><span>{{ pg.def }}</span></li>
+                    <li><span>💨 SPD</span><span>{{ pg.spd }}</span></li>
+                  </ul>
+                  <div class="glossary-details-section" *ngIf="pg.detailedActions && pg.detailedActions.length > 0">
+                    <strong>Azioni:</strong>
+                    <div class="glossary-tags-container">
+                      <button *ngFor="let actionName of pg.detailedActions; let i = index"
+                              class="glossary-tag glossary-action-tag"
+                              (click)="showPgActionDetails(pg, actionName, i); $event.stopPropagation()">
+                        {{ actionName.name }}
+                      </button>
+                    </div>
+                  </div>
+                  <div class="glossary-details-section" *ngIf="pg.equipmentsName && pg.equipmentsName.length > 0">
+                    <strong>Equip:</strong>
+                    <div class="glossary-tags-container">
+                      <button *ngFor="let eqName of pg.equipmentsName; let i = index"
+                              class="glossary-tag glossary-equipment-tag"
+                              (click)="showPgEquipmentDetails(pg, eqName, i); $event.stopPropagation()">
+                        {{ eqName }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="glossary-card-footer" aria-hidden="true">
+                  Clicca per Descrizione
+                </div>
+              </div>
+              <div class="glossary-flip-card-back glossary-card"
+                   (click)="hidePgDetails(pg); $event.stopPropagation()"
+                   role="button" tabindex="0"
+                   (keydown.enter)="hidePgDetails(pg)"
+                   (keydown.space)="hidePgDetails(pg); $event.preventDefault()">
+                <div class="glossary-card-header">
+                  <span class="glossary-card-name">Dettagli {{ pg.name }}</span>
+                </div>
+                <div class="glossary-card-body glossary-description-body"
+                     [id]="'pg-details-' + pg.id"
+                     aria-live="polite">
+                  <p class="glossary-description-text">
+                    {{ pg.descriptionToShow }}
+                  </p>
+                </div>
+                <div class="glossary-card-footer" aria-hidden="true">
+                  Clicca per tornare
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p *ngIf="!errorLoadingPgs && (!personaggi || personaggi.length === 0)" class="glossary-empty-message">
+        Nessun personaggio nel glossario.
+      </p>
+    </div>
+  </section>
+
+  <section class="glossary-section">
+    <div class="glossary-accordion-header" (click)="toggleMostri()" role="button" [attr.aria-expanded]="mostriVisible" aria-controls="mostri-grid">
+      <h2 class="glossary-title">Mostri</h2> <span class="glossary-accordion-icon">{{ mostriVisible ? '▼' : '▶' }}</span>
+    </div>
+
+    <div id="mostri-grid" *ngIf="mostriVisible">
+      <div *ngIf="errorLoadingMonsters" class="glossary-error" role="alert">
+        {{ errorLoadingMonsters }}
+      </div>
+      <div class="glossary-grid" *ngIf="!errorLoadingMonsters && mostri.length > 0">
+        <div class="glossary-grid-item" *ngFor="let monster of mostri; trackBy: trackByMonsterId">
+          <div class="glossary-flip-card" [class.flipped]="monster.flipped" [attr.aria-expanded]="monster.flipped">
+            <div class="glossary-flip-card-inner">
+              <div class="glossary-flip-card-front glossary-card glossary-monster-card"
+                   (click)="handleMonsterCardFrontClick(monster)"
+                   role="button" tabindex="0"
+                   (keydown.enter)="handleMonsterCardFrontClick(monster)"
+                   (keydown.space)="handleMonsterCardFrontClick(monster); $event.preventDefault()">
+                <div class="glossary-card-header">
+                  <span class="glossary-card-name">{{ monster.name }}</span>
+                  <span class="glossary-badge monster-danger-badge">{{ monster.danger }}</span>
+                </div>
+                <div class="glossary-card-body">
+                  <div class="glossary-card-image-container">
+                    <img #imgMonster
+                         [src]="monster.imageUrl"
+                         [alt]="'Immagine di ' + monster.name"
+                         class="glossary-card-image glossary-monster-image"
+                         loading="lazy"
+                         (error)="imgMonster.style.display='none'; fallbackMonster.style.display='flex'"
+                         (load)="imgMonster.style.display='block'; fallbackMonster.style.display='none'">
+                    <div #fallbackMonster class="glossary-card-image-fallback glossary-monster-fallback" style="display: none;">
+                      <span>?</span>
+                    </div>
+                  </div>
+                  <ul class="glossary-stats-list" [attr.aria-label]="'Statistiche di ' + monster.name">
+                    <li><span>❤️ HP</span><span>{{ monster.hp }}</span></li>
+                    <li><span>⚔️ ATK</span><span>{{ monster.atk }}</span></li>
+                    <li><span>🛡️ DEF</span><span>{{ monster.def }}</span></li>
+                    <li><span>💨 SPD</span><span>{{ monster.spd }}</span></li>
+                  </ul>
+                  <div class="glossary-details-section" *ngIf="monster.actionsName && monster.actionsName.length > 0">
+                    <strong>Azioni:</strong>
+                    <div class="glossary-tags-container">
+                      <button *ngFor="let actionName of monster.actionsName; let i = index"
+                              class="glossary-tag glossary-action-tag"
+                              (click)="showMonsterActionDetails(monster, actionName, i); $event.stopPropagation()">
+                        {{ actionName }}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="glossary-card-footer" aria-hidden="true">
+                  Clicca per Descrizione
+                </div>
+              </div>
+              <div class="glossary-flip-card-back glossary-card glossary-monster-card"
+                   (click)="hideMonsterDetails(monster); $event.stopPropagation()"
+                   role="button" tabindex="0"
+                   (keydown.enter)="hideMonsterDetails(monster)"
+                   (keydown.space)="hideMonsterDetails(monster); $event.preventDefault()">
+                <div class="glossary-card-header">
+                  <span class="glossary-card-name">{{ monster.name }} - Dettagli</span>
+                </div>
+                <div class="glossary-card-body glossary-description-body"
+                     [id]="'monster-details-' + monster.id"
+                     aria-live="polite">
+                  <p class="glossary-description-text">
+                    {{ monster.descriptionToShow }}
+                  </p>
+                </div>
+                <div class="glossary-card-footer" aria-hidden="true">
+                  Clicca per tornare
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p *ngIf="!errorLoadingMonsters && (!mostri || mostri.length === 0)" class="glossary-empty-message">
+        Nessun mostro nel glossario.
+      </p>
+    </div>
+  </section>
+
+</div>

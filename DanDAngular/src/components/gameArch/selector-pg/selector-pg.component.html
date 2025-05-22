@@ -1,0 +1,58 @@
+<div class="rain"></div>
+<div class="select-pg-background">
+  <div class="header-controls">
+    <a routerLink="/" class="game-button back-button">
+      <span class="arrow">&lt;</span> HOME
+    </a>
+    <h2 class="title page-main-title">SELEZIONE PERSONAGGI</h2>
+  </div>
+    <div class="battle-button-container">
+      <button (click)="goToArena()" class="game-button go-to-battle-button" [disabled]="idSelectedCharacter.length !== 3">
+              VAI ALLA BATTAGLIA <span class="arrow">&gt;</span>
+      </button>
+    </div>
+  <div class="container py-4 content-container">
+
+    <p class="selection-info">Seleziona 3 developers: {{ selectedNames }}</p>
+
+    <div *ngIf="errorLoadingPgs" class="selector-error" role="alert">
+      {{ errorLoadingPgs }}
+    </div>
+
+    <div class="row g-3 justify-content-center character-grid" *ngIf="!errorLoadingPgs && allCharacters.length > 0">
+      <div class="col-12 col-sm-6 col-md-4 d-flex" *ngFor="let character of allCharacters; trackBy: trackByCharacterId">
+        <div class="card character-card shadow"
+             [class.selected-card]="idSelectedCharacter.includes(character.id)"
+             (click)="selectionChange(character.id)">
+
+          <div class="card-image-container">
+            <img #characterImgRef
+                 [src]="character.imageUrl || 'https://placehold.co/300x400/000000/0f0?text=' + (character.name || 'Dev')"
+                 class="card-img-top"
+                 [alt]="character.name || 'Personaggio Sconosciuto'"
+                 loading="lazy"
+                 (load)="characterImgRef.style.display='block'; characterFallbackRef.style.display='none'"
+                 (error)="characterImgRef.style.display='none'; characterFallbackRef.style.display='flex'">
+            <div #characterFallbackRef class="card-image-fallback" style="display: none;">
+              <span>?</span>
+            </div>
+          </div>
+
+          <div class="card-info-overlay">
+            <h5 class="card-title-overlay">{{ character.name || 'Sviluppatore Ignoto' }}</h5>
+            <ul class="character-stats-list-overlay" *ngIf="character.hp !== undefined">
+              <li><span>❤️ HP</span><span>{{ character.hp }}</span></li>
+              <li><span>⚔️ ATK</span><span>{{ character.atk }}</span></li>
+              <li><span>🛡️ DEF</span><span>{{ character.def }}</span></li>
+              <li><span>💨 SPD</span><span>{{ character.spd }}</span></li>
+            </ul>
+            <p *ngIf="character.hp === undefined" class="stats-not-available">Statistiche non disponibili</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p *ngIf="!errorLoadingPgs && (!allCharacters || allCharacters.length === 0)" class="selector-empty-message">
+      Nessun personaggio disponibile per la selezione.
+    </p>
+  </div>
+</div>

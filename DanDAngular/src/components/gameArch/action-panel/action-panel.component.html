@@ -1,0 +1,13 @@
+<div class="container d-flex justify-content-center align-items-center attack-bg">
+  <div class="card text-center shadow attack-card">
+    <div class="card-header bg-dark text-white">
+      Scegli un attacco
+    </div>
+    <div class="card-body d-grid gap-2 p-3">
+      <button *ngFor="let attack of actions"
+              class="btn btn-warning btn-lg attack-button">
+        {{ attack.nameAction }}
+      </button>
+    </div>
+  </div>
+</div>

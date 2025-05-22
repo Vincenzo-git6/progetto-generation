@@ -1,0 +1,22 @@
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: #000;
+  font-family: 'VT323', monospace;
+  color: #e0e0e0;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+@font-face {
+  font-family: 'FontTitolo';
+  src: url('assets/FontTitolo.ttf') format('truetype');
+}

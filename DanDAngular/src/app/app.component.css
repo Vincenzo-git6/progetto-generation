@@ -1,0 +1,15 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-image: linear-gradient(
+    rgba(0, 0, 0, 0.4),
+    rgba(0, 0, 0, 0.4)
+  ),
+  url('https://i.imgur.com/sSGnVcM.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: #eee;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+}

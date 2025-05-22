@@ -1,0 +1,28 @@
+<div class="matrix-container">
+  <h1 class="matrix-text" data-text="Darkest Developers">Darkest Developers</h1>
+</div>
+<div class="rain"></div>
+
+<div class="container button-container">
+  <a routerLink="/selezione" class="game-button primary">NEW GAME</a>
+  <button routerLink="/glossary" class="game-button secondary">GLOSSARIO</button>
+  <button (click)="openCreditsModal()" class="game-button credits">CREDITS</button>
+</div>
+
+<div class="credits-modal" *ngIf="showCreditsModal" [ngClass]="{'show': showCreditsModal}">
+  <div class="modal-content">
+    <button class="modal-close" (click)="closeCreditsModal()">X</button>
+    <h2>Credits</h2>
+    <ul>
+      <li>Claudio "Pingu" Costantino - Git Master</li>
+      <li>Alessandro Tardiola - Project Manager</li>
+      <li>Edoardo Sannia - Developer</li>
+      <li>Vincenzo Mascolo - Developer</li>
+      <li>Veronica Pugliese - Developer</li>
+      <li>Francesco Pierno - Developer</li>
+      <li>Sviluppato con Odio, Astio e Dolore. Feat Stefano ogni tanto.</li>
+      <li>Grazie a tutti i giocatori che hanno giocato a Darkest Developers.</li>
+      <li>Bacino virtuale sul naso.</li>
+    </ul>
+  </div>
+</div>
